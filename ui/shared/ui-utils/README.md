@@ -43,16 +43,16 @@ src/
 ### Helpers
 
 ```tsx
-import { formatDate, cn } from '@workspace/ui-utils/helpers';
+import { formatDate, cn } from "@workspace/ui-utils/helpers";
 
 const formatted = formatDate(new Date());
-const classNames = cn('text-sm', condition && 'text-bold');
+const classNames = cn("text-sm", condition && "text-bold");
 ```
 
 ### Validators
 
 ```tsx
-import { userSchema } from '@workspace/ui-utils/validators';
+import { userSchema } from "@workspace/ui-utils/validators";
 
 const validation = userSchema.parse(data);
 ```
@@ -60,7 +60,7 @@ const validation = userSchema.parse(data);
 ### Constants
 
 ```tsx
-import { HTTP_CODES, ROUTES } from '@workspace/ui-utils/constants';
+import { HTTP_CODES, ROUTES } from "@workspace/ui-utils/constants";
 
 console.log(HTTP_CODES.OK); // 200
 ```

@@ -6,7 +6,7 @@ import { logger } from "@/config/logger";
 import { errorHandler } from "@/middleware/error-handler";
 import { loggerMiddleware } from "@/middleware/logger";
 import { rateLimitMiddleware } from "@/middleware/rate-limit";
-import { db } from "./database/db";
+import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { auth } from "./lib/auth";
 import { HonoContext } from "./types";

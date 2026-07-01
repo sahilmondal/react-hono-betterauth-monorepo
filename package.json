@@ -23,7 +23,9 @@
     }
   },
   "workspaces": [
-    "apps/*",
+    "ui/apps/*",
+    "ui/shared/*",
+    "api/*",
     "packages/*"
   ]
 }

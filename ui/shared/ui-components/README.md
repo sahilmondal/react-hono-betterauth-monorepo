@@ -42,7 +42,7 @@ src/
 ## Usage
 
 ```tsx
-import { Button, Input, Dialog } from '@workspace/ui-components';
+import { Button, Input, Dialog } from "@workspace/ui-components";
 
 export function MyComponent() {
   return (

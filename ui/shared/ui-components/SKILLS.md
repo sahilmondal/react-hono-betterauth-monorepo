@@ -75,22 +75,21 @@ ui-components/
 
 ```tsx
 // src/components/Button.tsx
-import { ComponentProps, forwardRef } from 'react';
-import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '@workspace/ui-utils/helpers';
+import { ComponentProps, forwardRef } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@workspace/ui-utils/helpers";
 
-const buttonVariants = cva('...', {
+const buttonVariants = cva("...", {
   variants: {
     variant: {
-      default: '...',
-      outline: '...',
+      default: "...",
+      outline: "...",
     },
   },
 });
 
 export interface ButtonProps
-  extends ComponentProps<'button'>,
-    VariantProps<typeof buttonVariants> {}
+  extends ComponentProps<"button">, VariantProps<typeof buttonVariants> {}
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, ...props }, ref) => (
@@ -107,8 +106,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 ```tsx
 // In Next.js app or React component
-import { Button, Input, Dialog } from '@workspace/ui-components';
-import { useFormState } from 'react-hook-form';
+import { Button, Input, Dialog } from "@workspace/ui-components";
+import { useFormState } from "react-hook-form";
 
 export function LoginForm() {
   return (

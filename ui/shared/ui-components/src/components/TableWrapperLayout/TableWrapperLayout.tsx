@@ -5,7 +5,7 @@ import {
   type ColumnDef,
   type SortingState,
   type Header,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   ChevronUpIcon,
   ChevronDownIcon,
@@ -14,7 +14,7 @@ import {
   ChevronRightIcon,
   ChevronsLeftIcon,
   ChevronsRightIcon,
-} from "lucide-react"
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -29,25 +29,25 @@ import {
   SelectTrigger,
   SelectValue,
   Button,
-} from "@workspace/ui-core"
+} from "@workspace/ui-core";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface TableWrapperLayoutProps<TData> {
-  columns: ColumnDef<TData, unknown>[]
-  data: TData[]
-  isLoading?: boolean
-  toolbar?: React.ReactNode
-  emptyState?: React.ReactNode
-  sorting?: SortingState
-  onSortingChange?: (sorting: SortingState) => void
+  columns: ColumnDef<TData, unknown>[];
+  data: TData[];
+  isLoading?: boolean;
+  toolbar?: React.ReactNode;
+  emptyState?: React.ReactNode;
+  sorting?: SortingState;
+  onSortingChange?: (sorting: SortingState) => void;
   pagination: {
-    page: number
-    pageSize: number
-    total: number
-    onPageChange: (page: number) => void
-    onPageSizeChange: (size: number) => void
-  }
+    page: number;
+    pageSize: number;
+    total: number;
+    onPageChange: (page: number) => void;
+    onPageSizeChange: (size: number) => void;
+  };
 }
 
 // ─── Sort Header ──────────────────────────────────────────────────────────────
@@ -56,10 +56,10 @@ function SortableHeader({
   column,
   label,
 }: {
-  column: Header<unknown, unknown>["column"]
-  label: string
+  column: Header<unknown, unknown>["column"];
+  label: string;
 }) {
-  const sorted = column.getIsSorted()
+  const sorted = column.getIsSorted();
   return (
     <button
       type="button"
@@ -75,7 +75,7 @@ function SortableHeader({
         <ChevronsUpDownIcon className="size-4 text-neutral-300" />
       )}
     </button>
-  )
+  );
 }
 
 // ─── Skeleton Rows ────────────────────────────────────────────────────────────
@@ -93,7 +93,7 @@ function SkeletonRows({ columns }: { columns: number }) {
         </TableRow>
       ))}
     </>
-  )
+  );
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
@@ -105,7 +105,7 @@ function PaginationBar({
   onPageChange,
   onPageSizeChange,
 }: TableWrapperLayoutProps<unknown>["pagination"]) {
-  const totalPages = Math.max(1, Math.ceil(total / pageSize))
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
   return (
     <div className="flex items-center justify-end gap-4 px-4 py-3">
@@ -174,7 +174,7 @@ function PaginationBar({
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 // ─── Main Component ───────────────────────────────────────────────────────────
@@ -197,25 +197,25 @@ export function TableWrapperLayout<TData>({
     },
     onSortingChange: (updater) => {
       const newSorting =
-        typeof updater === "function"
-          ? updater(sorting ?? [])
-          : updater
-      onSortingChange?.(newSorting)
+        typeof updater === "function" ? updater(sorting ?? []) : updater;
+      onSortingChange?.(newSorting);
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     manualSorting: true,
     manualPagination: true,
-  })
+  });
 
-  const headerGroups = table.getHeaderGroups()
-  const rowModel = table.getRowModel()
-  const isEmpty = !isLoading && data.length === 0
+  const headerGroups = table.getHeaderGroups();
+  const rowModel = table.getRowModel();
+  const isEmpty = !isLoading && data.length === 0;
 
   return (
     <div className="overflow-hidden rounded-lg border border-border bg-background">
       {/* Toolbar */}
-      {toolbar && <div className="border-b border-border px-4 py-3">{toolbar}</div>}
+      {toolbar && (
+        <div className="border-b border-border px-4 py-3">{toolbar}</div>
+      )}
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -224,42 +224,34 @@ export function TableWrapperLayout<TData>({
             {headerGroups.map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  const canSort = header.column.getCanSort()
+                  const canSort = header.column.getCanSort();
                   const label = header.isPlaceholder
                     ? null
                     : typeof header.column.columnDef.header === "string"
                       ? header.column.columnDef.header
-                      : header.column.id
+                      : header.column.id;
 
                   return (
                     <TableHead key={header.id}>
                       {canSort && label ? (
-                        <SortableHeader
-                          column={header.column}
-                          label={label}
-                        />
+                        <SortableHeader column={header.column} label={label} />
                       ) : (
-                        label ?? null
+                        (label ?? null)
                       )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {/* Loading skeletons */}
-            {isLoading && (
-              <SkeletonRows columns={columns.length} />
-            )}
+            {isLoading && <SkeletonRows columns={columns.length} />}
 
             {/* Empty state */}
             {isEmpty && emptyState && (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-full p-0"
-                >
+                <TableCell colSpan={columns.length} className="h-full p-0">
                   <div className="flex min-h-[320px] items-center justify-center">
                     {emptyState}
                   </div>
@@ -291,5 +283,5 @@ export function TableWrapperLayout<TData>({
       {/* Pagination */}
       {!isLoading && !isEmpty && <PaginationBar {...pagination} />}
     </div>
-  )
+  );
 }

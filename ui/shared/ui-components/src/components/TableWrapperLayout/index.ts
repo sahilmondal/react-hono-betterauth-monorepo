@@ -1,1 +1,1 @@
-export { TableWrapperLayout } from "./TableWrapperLayout"
+export { TableWrapperLayout } from "./TableWrapperLayout";

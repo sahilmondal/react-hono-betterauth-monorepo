@@ -344,7 +344,7 @@ export default {
   plugins: {
     "@tailwindcss/postcss": {},
   },
-}
+};
 ```
 
 **File**: Tailwind config (auto-generated from `components.json` via shadcn/cli)
@@ -406,7 +406,15 @@ export default {
 
 ```typescript
 // Form
-export { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "./components/form";
+export {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  FormDescription,
+} from "./components/form";
 
 // Input
 export { Input } from "./components/input";
@@ -415,7 +423,14 @@ export { Input } from "./components/input";
 export { Button, buttonVariants } from "./components/button";
 
 // Card
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "./components/card";
+export {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "./components/card";
 
 // Label
 export { Label } from "./components/label";
@@ -427,7 +442,14 @@ export { Separator } from "./components/separator";
 **Usage in Apps**:
 
 ```typescript
-import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '@workspace/ui-core';
+import {
+  Button,
+  Input,
+  Card,
+  CardHeader,
+  CardTitle,
+  CardContent,
+} from "@workspace/ui-core";
 ```
 
 ## Component Patterns
@@ -493,11 +515,11 @@ import { cn } from "@workspace/ui-core/lib/utils"
 **File**: `src/lib/utils.ts`
 
 ```typescript
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 ```
 
@@ -564,7 +586,7 @@ export function cn(...inputs: ClassValue[]) {
 
 4. **Use in nextjs-app**:
    ```typescript
-   import { MyComponent } from '@workspace/ui-core';
+   import { MyComponent } from "@workspace/ui-core";
    ```
 
 ### Styling Guidelines

@@ -1,4 +1,4 @@
-import { db } from "@/database/db";
+import { db } from "@workspace/db";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 
@@ -8,6 +8,21 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
+    sendResetPassword: async ({ user, url }) => {
+      console.log(`\n========================================`);
+      console.log(`[Better-Auth Reset Password] Link for ${user.email}:`);
+      console.log(url);
+      console.log(`========================================\n`);
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      console.log(`\n========================================`);
+      console.log(`[Better-Auth Email Verification] Link for ${user.email}:`);
+      console.log(url);
+      console.log(`========================================\n`);
+    },
   },
   socialProviders: {
     github: {

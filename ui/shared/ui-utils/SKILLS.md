@@ -50,27 +50,27 @@ ui-utils/
 
 ```tsx
 // Common utility functions
-export function cn(...classes: ClassValue[]): string
-export function formatDate(date: Date, format?: string): string
+export function cn(...classes: ClassValue[]): string;
+export function formatDate(date: Date, format?: string): string;
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
-): T
+  wait: number,
+): T;
 export function throttle<T extends (...args: any[]) => any>(
   func: T,
-  wait: number
-): T
-export function classNames(...classes: any[]): string
+  wait: number,
+): T;
+export function classNames(...classes: any[]): string;
 ```
 
 ### 2. Validators (`src/validators/index.ts`)
 
 ```tsx
 // Zod schemas for validation
-import { z } from 'zod';
+import { z } from "zod";
 
-export const emailSchema = z.string().email('Invalid email');
-export const passwordSchema = z.string().min(8, 'Password too short');
+export const emailSchema = z.string().email("Invalid email");
+export const passwordSchema = z.string().min(8, "Password too short");
 
 export const userSchema = z.object({
   email: emailSchema,
@@ -96,11 +96,11 @@ export const HTTP_CODES = {
 } as const;
 
 export const ROUTES = {
-  HOME: '/',
-  LOGIN: '/login',
-  SIGNUP: '/signup',
-  DASHBOARD: '/dashboard',
-  SETTINGS: '/settings',
+  HOME: "/",
+  LOGIN: "/login",
+  SIGNUP: "/signup",
+  DASHBOARD: "/dashboard",
+  SETTINGS: "/settings",
 } as const;
 ```
 
@@ -109,23 +109,23 @@ export const ROUTES = {
 ### Using Helpers
 
 ```tsx
-import { cn, formatDate } from '@workspace/ui-utils/helpers';
+import { cn, formatDate } from "@workspace/ui-utils/helpers";
 
 // Conditional className
 const buttonClass = cn(
-  'px-4 py-2 rounded',
-  variant === 'primary' && 'bg-blue-500',
-  disabled && 'opacity-50 cursor-not-allowed'
+  "px-4 py-2 rounded",
+  variant === "primary" && "bg-blue-500",
+  disabled && "opacity-50 cursor-not-allowed",
 );
 
 // Format dates
-const formatted = formatDate(new Date(), 'MMM dd, yyyy');
+const formatted = formatDate(new Date(), "MMM dd, yyyy");
 ```
 
 ### Using Validators
 
 ```tsx
-import { userSchema } from '@workspace/ui-utils/validators';
+import { userSchema } from "@workspace/ui-utils/validators";
 
 // In API endpoint
 export async function createUser(data: unknown) {
@@ -135,8 +135,8 @@ export async function createUser(data: unknown) {
 }
 
 // In React form
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export function SignupForm() {
   const { register, handleSubmit } = useForm({
@@ -144,10 +144,12 @@ export function SignupForm() {
   });
 
   return (
-    <form onSubmit={handleSubmit(async (data) => {
-      // data is validated automatically
-      await createUser(data);
-    })}>
+    <form
+      onSubmit={handleSubmit(async (data) => {
+        // data is validated automatically
+        await createUser(data);
+      })}
+    >
       {/* form fields */}
     </form>
   );
@@ -157,7 +159,7 @@ export function SignupForm() {
 ### Using Constants
 
 ```tsx
-import { HTTP_CODES, ROUTES } from '@workspace/ui-utils/constants';
+import { HTTP_CODES, ROUTES } from "@workspace/ui-utils/constants";
 
 // In API routes
 if (response.status === HTTP_CODES.OK) {
@@ -168,7 +170,7 @@ if (response.status === HTTP_CODES.OK) {
 router.push(ROUTES.DASHBOARD);
 
 // In Link components
-<Link href={ROUTES.LOGIN}>Login</Link>
+<Link href={ROUTES.LOGIN}>Login</Link>;
 ```
 
 ## Naming Conventions
@@ -184,8 +186,8 @@ router.push(ROUTES.DASHBOARD);
 
 ```tsx
 // src/helpers/cn.ts
-import clsx from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import clsx from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export type ClassValue = string | undefined | null | false;
 
@@ -203,11 +205,11 @@ export function cn(...classes: ClassValue[]): string {
 
 ```tsx
 // src/validators/auth.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const loginSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
+  email: z.string().email("Invalid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
   rememberMe: z.boolean().optional(),
 });
 
@@ -219,25 +221,25 @@ export type LoginInput = z.infer<typeof loginSchema>;
 ```tsx
 // src/constants/api.ts
 export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3009';
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:3009";
 
 export const API_ENDPOINTS = {
   AUTH: {
-    LOGIN: '/auth/login',
-    SIGNUP: '/auth/signup',
-    LOGOUT: '/auth/logout',
-    REFRESH: '/auth/refresh',
+    LOGIN: "/auth/login",
+    SIGNUP: "/auth/signup",
+    LOGOUT: "/auth/logout",
+    REFRESH: "/auth/refresh",
   },
   USERS: {
-    PROFILE: '/users/profile',
-    SETTINGS: '/users/settings',
+    PROFILE: "/users/profile",
+    SETTINGS: "/users/settings",
   },
 } as const;
 
 export const CACHE_KEYS = {
-  USER: 'user',
-  POSTS: 'posts',
-  COMMENTS: 'comments',
+  USER: "user",
+  POSTS: "posts",
+  COMMENTS: "comments",
 } as const;
 ```
 

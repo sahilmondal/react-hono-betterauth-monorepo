@@ -1,5 +1,5 @@
 {
-  "projectName": "react-app",
+  "projectName": "react-tanstack-template",
   "mode": "file-router",
   "typescript": true,
   "packageManager": "bun",
@@ -9,13 +9,10 @@
   "envVarValues": {},
   "git": false,
   "install": true,
-  "routerOnly": false,
+  "routerOnly": true,
   "version": 1,
   "framework": "react",
   "chosenAddOns": [
-    "eslint",
-    "shadcn",
-    "table",
-    "better-auth"
+    "eslint"
   ]
 }

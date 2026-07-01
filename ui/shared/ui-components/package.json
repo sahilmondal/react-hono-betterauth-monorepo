@@ -40,7 +40,6 @@
     "@types/react-dom": "^19.2.3",
     "@workspace/ui-core": "workspace:*",
     "@workspace/ui-utils": "workspace:*",
-    "@workspace/auth-client": "workspace:*",
     "@workspace/typescript-config": "workspace:*",
     "@workspace/eslint-config": "workspace:*",
     "eslint": "^9.39.2",
