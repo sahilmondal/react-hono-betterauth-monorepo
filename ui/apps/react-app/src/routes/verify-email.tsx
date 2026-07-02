@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card.tsx'
-import { authClient } from '@/lib/auth-client.ts'
+import { authClient } from '@workspace/ui-clients'
 
 type VerifyEmailSearch = {
   token?: string

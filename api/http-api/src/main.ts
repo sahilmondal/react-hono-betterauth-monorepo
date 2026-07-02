@@ -1,15 +1,15 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { compress } from "hono/compress";
-import { env } from "@/config/env";
-import { logger } from "@/config/logger";
-import { errorHandler } from "@/middleware/error-handler";
-import { loggerMiddleware } from "@/middleware/logger";
-import { rateLimitMiddleware } from "@/middleware/rate-limit";
+import { env } from "./config/env";
+import { logger } from "./config/logger";
+import { errorHandler } from "./middleware/error-handler";
+import { loggerMiddleware } from "./middleware/logger";
+import { rateLimitMiddleware } from "./middleware/rate-limit";
 import { db } from "@workspace/db";
 import { sql } from "drizzle-orm";
 import { auth } from "./lib/auth";
-import { HonoContext } from "./types";
+import type { HonoContext } from "./types";
 import usersRoute from "./modules/users/users.route";
 
 const app = new Hono<HonoContext>();
@@ -35,7 +35,7 @@ app.use(compress());
 app.use(
   cors({
     origin:
-      env?.FRONTEND_ORIGINS?.split(",").map((origin) => origin.trim()) ||
+      env?.FRONTEND_ORIGINS?.split(",").map((origin: string) => origin.trim()) ||
       "http://localhost:3000",
     allowHeaders: ["Content-Type", "Authorization"],
     allowMethods: ["POST", "GET", "PUT", "DELETE", "OPTIONS"],
@@ -59,19 +59,22 @@ app.use("*", async (c, next) => {
   await next();
 });
 
-// Health check endpoint
-app.get("/health", (c) => {
-  return c.json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-  });
-});
+// Health check and API routes (chained for Hono RPC type extraction)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const routes = app
+  .get("/health", (c) => {
+    return c.json({
+      status: "ok",
+      timestamp: new Date().toISOString(),
+    });
+  })
+  .route("/users", usersRoute);
 
-// Authentication routes (handled by BetterAuth)
+// Authentication routes (handled by BetterAuth, not part of standard RPC client)
 app.on(["POST", "GET"], "/auth/*", (c) => auth.handler(c.req.raw));
 
-// API routes
-app.route("/users", usersRoute);
+export type AppType = typeof routes;
+
 
 // 404 handler
 app.notFound((c) => {

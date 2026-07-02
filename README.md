@@ -15,7 +15,7 @@ Orchestrated using **Turborepo** and powered by **Bun**, this template brings to
 | **Backend API**       | **Hono.js**                                   | Light, edge-ready, and ultra-fast web framework running on port `3007`.                            |
 | **Authentication**    | **Better Auth**                               | Client & Server SDKs for secure email/password auth, verification, reset flows, and social logins. |
 | **Database & ORM**    | **Drizzle ORM**, **PostgreSQL**               | Type-safe SQL queries, schemas, and live migration toolkit.                                        |
-| **Client Generation** | **Orval**                                     | Generates fully typed API clients directly from OpenAPI specs into a shared package.               |
+| **Client Type Safety**| **Hono RPC**                                  | Achieves end-to-end type safety directly from backend routes without code generation.              |
 | **Orchestration**     | **Turborepo**, **Bun**                        | Monorepo task pipeline management, execution caching, and fast package installation.               |
 
 ---
@@ -25,9 +25,9 @@ Orchestrated using **Turborepo** and powered by **Bun**, this template brings to
 ```mermaid
 graph TD
   subgraph ui ["UI & Frontend"]
-    react-tanstack-template["React Application (TanStack Start)"]
+    react-tanstack-template["React Application (TanStack Router)"]
     ui-components["@workspace/ui-components (Shared shadcn)"]
-    ui-clients["@workspace/ui-clients (Generated Orval Clients)"]
+    ui-clients["@workspace/ui-clients (Shared Hono RPC & Auth Clients)"]
   end
 
   subgraph api ["Backend API"]
@@ -41,8 +41,8 @@ graph TD
 
   react-tanstack-template -.-> db
   http-api --> db
-  react-tanstack-template -->|REST Auth Calls| http-api
-  ui-clients -->|API Actions| http-api
+  ui-clients -->|RPC & Auth Calls| http-api
+  react-tanstack-template -->|Imports Clients| ui-clients
 ```
 
 ### 📁 Project Structure
@@ -60,7 +60,7 @@ graph TD
 │   ├── apps/
 │   │   └── react-app/      # Vite + React 19 Client SPA with TanStack Router (port 3000)
 │   └── shared/
-│       ├── ui-clients/     # Orval-generated API clients
+│       ├── ui-clients/     # Shared type-safe API & Better Auth clients
 │       ├── ui-components/  # Shared UI components (Radix, Base UI, Lucide)
 │       ├── ui-core/        # Shared core styling & configs
 │       └── ui-utils/       # Shared UI utility helpers
@@ -174,13 +174,33 @@ This template handles complete client-server authentication flows powered by **B
 
 ---
 
-## 🔗 Full-Stack Type Safety with Orval
+## 🔗 Full-Stack Type Safety with Hono RPC
 
-To generate type-safe HTTP clients for the React frontend from the Hono.js routes using **Orval**:
+This monorepo template achieves 100% end-to-end type safety directly from the Hono.js router definitions using **Hono RPC**.
 
-1. The Hono.js application exports its routes using an OpenAPI schema standard.
-2. Run Orval client generation to read the backend OpenAPI schema and generate frontend client hooks inside the `@workspace/ui-clients` workspace.
-3. Import these generated client hooks in the React app for autocomplete and compile-time safety on request payloads and response bodies.
+1. **Route Chaining & AppType Export**:
+   Backend routes are chained and exported in `api/http-api/src/main.ts`:
+   ```typescript
+   const routes = app
+     .get("/health", ...)
+     .route("/users", usersRoute);
+   export type AppType = typeof routes;
+   ```
+2. **Path Alias Type Compatibility**:
+   Imports inside `api/http-api` referenced by the exported `AppType` are structured as relative paths so they resolve natively inside consumer workspaces (like the React app) without any configuration mappings.
+3. **Type-Safe RPC Client**:
+   The shared package `@workspace/ui-clients` (`ui/shared/ui-clients/`) imports the `AppType` and initializes the client using Hono's `hc` inside `src/api-client.ts`:
+   ```typescript
+   import { hc } from 'hono/client'
+   import type { AppType } from 'hono-api'
+   export const api = hc<AppType>(import.meta.env.VITE_API_URL || 'http://localhost:3007')
+   ```
+   Consumer apps (like `react-app`) import the client directly:
+   ```typescript
+   import { api } from '@workspace/ui-clients'
+   ```
+4. **Autocomplete & Compile-Time Check**:
+   Using `api` ensures complete autocomplete on request URL paths, HTTP query params, json request bodies, headers, and type safety on the return response schemas (e.g. `api.users.me.$get()`).
 
 ---
 

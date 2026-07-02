@@ -1,9 +1,9 @@
-import { Context, Next } from "hono";
+import { Context, type Next } from "hono";
 import {
   RATE_LIMIT_MAX_REQUESTS,
   RATE_LIMIT_WINDOW_MS,
-} from "@/utils/constants";
-import { ApiError } from "@/utils/errors";
+} from "../utils/constants";
+import { ApiError } from "../utils/errors";
 
 interface RateLimitEntry {
   count: number;

@@ -1,5 +1,5 @@
-import { Context, Next } from "hono";
-import { logger } from "@/config/logger";
+import { Context, type Next } from "hono";
+import { logger } from "../config/logger";
 import { randomUUID } from "crypto";
 
 export async function loggerMiddleware(c: Context, next: Next) {

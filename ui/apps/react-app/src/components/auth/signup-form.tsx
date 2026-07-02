@@ -16,7 +16,7 @@ import {
   FieldLabel,
 } from '@/components/ui/field.tsx'
 import { Input } from '@/components/ui/input.tsx'
-import { authClient } from '@/lib/auth-client.ts'
+import { authClient } from '@workspace/ui-clients'
 
 export function SignupForm({
   className,

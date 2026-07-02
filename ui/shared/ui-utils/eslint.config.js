@@ -1,7 +1,7 @@
-import baseConfig from '@workspace/eslint-config/base.js';
+import { config } from '@workspace/eslint-config/base';
 
 export default [
-  ...baseConfig,
+  ...config,
   {
     ignores: ['dist', 'node_modules'],
     files: ['**/*.ts'],

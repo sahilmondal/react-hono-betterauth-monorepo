@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/card.tsx'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field.tsx'
 import { Input } from '@/components/ui/input.tsx'
-import { authClient } from '@/lib/auth-client.ts'
+import { authClient } from '@workspace/ui-clients'
 
 type ResetPasswordSearch = {
   token?: string

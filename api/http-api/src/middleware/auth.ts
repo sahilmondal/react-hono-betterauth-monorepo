@@ -1,5 +1,5 @@
-import { AuthError } from "@/utils/errors";
-import { Context, Next } from "hono";
+import { AuthError } from "../utils/errors";
+import { Context, type Next } from "hono";
 
 export async function authMiddleware(c: Context, next: Next) {
   const session = c.get("session");

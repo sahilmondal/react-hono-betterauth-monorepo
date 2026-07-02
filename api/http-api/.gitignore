@@ -44,9 +44,6 @@ coverage/
 *.sqlite3
 *.db
 
-# Drizzle-kit generated artifacts (if used)
-drizzle/**/migrations/
-drizzle/migrations/
 drizzle-kit/*.sqlite
 
 ## TypeORM / Prisma / other DB clients

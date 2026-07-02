@@ -95,3 +95,25 @@ To maintain a consistent and scalable codebase, follow these naming conventions:
 - Client calls `authClient.requestPasswordReset(...)` with a redirect URL pointing to `/reset-password`.
 - Hono backend logs the reset link to the console.
 - User clicks the link, enters their new password at `/reset-password?token=...`, and the password is secure-hashed in the database.
+
+---
+
+## Full-Stack Type Safety via Hono RPC
+
+To write or query backend APIs type-safely in the frontend application, we use **Hono RPC**.
+
+### 1. Backend Route Integration
+- When building new API endpoints, register them as chained route segments on the Hono `routes` instance inside [main.ts](file:///c:/Users/sahil/Desktop/projects/react-hono-betterauth-monorepo/api/http-api/src/main.ts).
+- Export the type definition: `export type AppType = typeof routes;`.
+- **CRITICAL**: Use relative imports inside the backend workspace for any files that are part of the exported `AppType` chain (e.g. `./middleware/auth` instead of `@/middleware/auth`). This allows consumer packages in the monorepo to resolve types natively without alias translation errors.
+
+### 2. Frontend Consumption
+- Import the typed RPC client and/or Better Auth client from the shared `@workspace/ui-clients` package:
+  ```typescript
+  import { api, authClient } from '@workspace/ui-clients'
+  ```
+- Make calls using type-safe paths:
+  ```typescript
+  const res = await api.users.me.$get()
+  const data = await res.json()
+  ```

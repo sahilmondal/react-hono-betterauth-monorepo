@@ -1,20 +1,19 @@
 # 🚀 Hono.js Production API - Quick Start Guide
 
-Welcome! Your **industry-standard, scalable Hono.js API** is ready to go!
+Welcome! Your **Hono.js API** is integrated with the monorepo workspace, PostgreSQL, Drizzle ORM, and Better Auth.
+
+---
 
 ## 📋 What Was Created
 
 A **fully-featured backend architecture** with:
 
-- ✅ **Domain-driven routing** (auth, users)
-- ✅ **Service layer** with business logic
-- ✅ **Database layer** with Drizzle ORM + PostgreSQL
-- ✅ **Middleware stack** (auth, validation, error handling, logging, rate limiting)
-- ✅ **Type-safe** throughout with TypeScript
-- ✅ **Multi-schema database** support for easy scaling
-- ✅ **JWT authentication** with session tracking
+- ✅ **Domain-driven routing** (users, health checks)
+- ✅ **Database layer** powered by the shared `@workspace/db` package
+- ✅ **Secure authentication** powered by Better Auth server instance
+- ✅ **Middleware stack** (Better Auth session attach, rate limiting, compress, cors, error handler, logger)
+- ✅ **Type-safe RPC API** chained for compile-time frontend client resolution
 - ✅ **Structured logging** with Pino
-- ✅ **Input validation** with Zod
 
 ---
 
@@ -29,50 +28,51 @@ Make sure PostgreSQL is running locally or accessible remotely.
 createdb hono_api
 ```
 
-Or use Docker:
-
-```bash
-docker run --name postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15
-docker exec postgres createdb -U postgres hono_api
-```
-
 ### 2. **Configure Environment Variables**
 
 ```bash
 # Copy example file
 cp .env.example .env
 
-# Edit .env with your PostgreSQL connection
+# Edit .env with your PostgreSQL connection and Better Auth secret
 nano .env
 ```
 
 Required changes:
 
 - `DATABASE_URL` → Your PostgreSQL connection string
-- `JWT_SECRET` → Min 32 characters (openssl rand -base64 32)
+- `BETTER_AUTH_SECRET` → Min 32 characters (run: `bunx --bun @better-auth/cli secret`)
+- `BETTER_AUTH_URL` → The base URL of your frontend application (`http://localhost:3000`)
 
 ```env
 DATABASE_URL=postgresql://postgres:password@localhost:5432/hono_api
-JWT_SECRET=generated-32-char-secret-key
+BETTER_AUTH_SECRET=your-generated-32-char-secret-key
+BETTER_AUTH_URL=http://localhost:3000
 ```
 
-### 3. **Initialize Database**
+### 3. **Initialize Database & Run Migrations**
+
+Database migrations are managed centrally inside the `@workspace/db` package (located in `packages/db`).
 
 ```bash
-# Generate migrations from schema
-bun run db:generate
+# Generate migrations based on schemas
+bun --filter @workspace/db db:generate
 
-# Apply migrations
-bun run db:migrate
+# Apply migrations to database
+bun --filter @workspace/db db:migrate
 ```
 
 ### 4. **Start Development Server**
 
 ```bash
-bun run dev
+# Start development server from root (starts all monorepo apps)
+bun dev
+
+# Or start the API in isolation
+bun --filter hono-api dev
 ```
 
-Server runs on `http://localhost:3007` with hot-reload!
+Server runs on `http://localhost:3007` with hot-reloading!
 
 ---
 
@@ -89,44 +89,8 @@ Response:
 ```json
 {
   "status": "ok",
-  "timestamp": "2024-01-01T12:00:00.000Z"
+  "timestamp": "2026-07-02T21:00:00.000Z"
 }
-```
-
-### Test User Registration
-
-```bash
-curl -X POST http://localhost:3007/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "test@example.com",
-    "password": "testpass123",
-    "name": "Test User"
-  }'
-```
-
-Expected Response (201):
-
-```json
-{
-  "success": true,
-  "data": {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-    "user": {
-      "id": "550e8400-e29b-41d4-a716-446655440000",
-      "email": "test@example.com",
-      "name": "Test User"
-    }
-  },
-  "message": "User registered successfully"
-}
-```
-
-### Test Protected Endpoint
-
-```bash
-curl http://localhost:3007/users/me \
-  -H "Authorization: Bearer YOUR_TOKEN_HERE"
 ```
 
 ---
@@ -134,224 +98,72 @@ curl http://localhost:3007/users/me \
 ## 📁 Project Structure Overview
 
 ```
-src/
-├── routes/              # API endpoints (domain-organized)
-│   ├── auth.ts         # Register, login, logout
-│   └── users.ts        # User profile management
-├── services/            # Business logic
-│   ├── auth.ts         # Password hashing, JWT generation
-│   └── users.ts        # User queries and updates
-├── middleware/          # Request processing
-│   ├── auth.ts         # JWT verification
-│   ├── error-handler.ts # Error formatting
-│   ├── logger.ts       # Request logging
-│   ├── rate-limit.ts   # Rate limiting
-│   └── validator.ts    # Input validation
-├── database/            # Data layer
-│   ├── db.ts           # Drizzle singleton
-│   └── schema/         # Table definitions
-│       ├── users.ts
-│       └── sessions.ts
-├── config/              # Configuration
-│   ├── env.ts          # Environment variables
-│   └── logger.ts       # Logger setup
-├── utils/               # Utilities
-│   ├── response.ts     # Response formatting
-│   ├── errors.ts       # Error classes
-│   └── constants.ts    # App constants
-└── index.ts            # App initialization
+api/http-api/
+├── dist/                # Production build output
+├── src/
+│   ├── config/          # Configurations
+│   │   ├── env.ts       # Type-safe environment validation
+│   │   └── logger.ts    # Pino logger setup
+│   ├── lib/
+│   │   └── auth.ts      # Better Auth server configuration
+│   ├── middleware/      # Hono middleware
+│   │   ├── error-handler.ts
+│   │   ├── logger.ts
+│   │   └── rate-limit.ts
+│   ├── modules/         # Domain-driven feature modules
+│   │   └── users/
+│   │       ├── users.controller.ts
+│   │       ├── users.route.ts
+│   │       └── users.service.ts
+│   ├── types/           # Type definitions
+│   ├── utils/           # Utility helpers
+│   └── main.ts          # App initialization & Hono RPC export
+├── tsconfig.json        # TypeScript configuration
+└── package.json         # Package scripts & dependencies
 ```
 
 ---
 
 ## 🔌 API Endpoints Reference
 
-### Auth Routes
+### Authentication Endpoints (Better Auth)
 
-| Method | Endpoint         | Description             |
-| ------ | ---------------- | ----------------------- |
-| POST   | `/auth/register` | Create new account      |
-| POST   | `/auth/login`    | Authenticate user       |
-| POST   | `/auth/logout`   | Logout (requires token) |
+Authentications are automatically caught and handled at `/auth/*` by Better Auth handler:
 
-### User Routes
+| Endpoint | Method | Description |
+|---|---|---|
+| `/auth/sign-up-email` | POST | Sign up a new user using email & password |
+| `/auth/sign-in-email` | POST | Sign in an existing user |
+| `/auth/sign-out` | POST | Clear the session & sign out |
 
-| Method | Endpoint     | Description                    |
-| ------ | ------------ | ------------------------------ |
-| GET    | `/users/me`  | Current user (requires auth)   |
-| GET    | `/users/:id` | Get any user                   |
-| PUT    | `/users/:id` | Update profile (requires auth) |
-| DELETE | `/users/:id` | Delete account (requires auth) |
+### User Endpoints (Chained RPC)
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/users/me` | GET | Returns the authenticated user session context |
 
 ---
 
 ## 📚 Available Commands
 
+Run these commands inside the `api/http-api` workspace:
+
 ```bash
-# Development
 bun run dev              # Start with hot-reload
-
-# Database
-bun run db:generate     # Generate migrations
-bun run db:migrate      # Apply migrations
-bun run db:studio       # Open Drizzle Studio (visual DB browser)
-
-# Build & Deploy
-bun run build            # Build for production
-bun run type-check       # TypeScript validation
+bun run build            # Build for production (output to dist/main.js)
+bun run typecheck        # TypeScript validation
+bun run lint             # Lint the codebase
 ```
-
----
-
-## 🔐 Security Features
-
-- **JWT Authentication** - Stateless token-based auth
-- **Password Hashing** - bcryptjs with salt
-- **Rate Limiting** - 100 requests per 15 minutes per IP
-- **Input Validation** - Zod schema validation
-- **Error Handling** - Standardized error responses
-- **CORS** - Configurable cross-origin access
-- **Request Logging** - Structured logs with correlation IDs
-
----
-
-## 📦 Scaling to New Features
-
-### Adding a New Domain (e.g., Products)
-
-**1. Create schema** (`src/database/schema/products.ts`):
-
-```typescript
-import { pgTable, text, uuid, decimal } from "drizzle-orm/pg-core";
-
-export const products = pgTable("products", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(),
-  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-});
-```
-
-**2. Export from schema index** (`src/database/schema/index.ts`):
-
-```typescript
-export * from "./products";
-```
-
-**3. Create service** (`src/services/products.ts`):
-
-```typescript
-import { db } from "@/database/db";
-import { products } from "@/database/schema";
-
-export async function getAllProducts() {
-  return await db.select().from(products);
-}
-```
-
-**4. Create routes** (`src/routes/products.ts`):
-
-```typescript
-import { Hono } from "hono";
-import * as productsService from "@/services/products";
-import { sendSuccess } from "@/utils/response";
-
-const productsRoute = new Hono();
-
-productsRoute.get("/", async (c) => {
-  const items = await productsService.getAllProducts();
-  return sendSuccess(c, items);
-});
-
-export default productsRoute;
-```
-
-**5. Register route** (`src/index.ts`):
-
-```typescript
-import products from "@/routes/products";
-// ...
-app.route("/products", products);
-```
-
-**6. Generate migration**:
-
-```bash
-bun run db:generate
-bun run db:migrate
-```
-
-That's it! Your new domain is ready.
-
----
-
-## 🛠 Troubleshooting
-
-### Port Already in Use
-
-```bash
-# Change port in .env
-PORT=3008
-```
-
-### Database Connection Error
-
-```bash
-# Check connection string in .env
-# Verify PostgreSQL is running
-psql postgresql://postgres:password@localhost:5432/hono_api
-```
-
-### Missing Migrations
-
-```bash
-# Generate migrations again
-bun run db:generate
-bun run db:migrate
-```
-
-### Type Errors in IDE
-
-```bash
-# Restart TypeScript server (VS Code)
-Cmd/Ctrl + Shift + P → "TypeScript: Restart TS Server"
-```
-
----
-
-## 📖 Documentation Links
-
-- **[Hono.js Docs](https://hono.dev)** - Framework documentation
-- **[Drizzle ORM](https://orm.drizzle.team)** - Database ORM
-- **[PostgreSQL Docs](https://www.postgresql.org/docs)** - Database documentation
-- **[Zod](https://zod.dev)** - Validation library
-- **[Pino Logger](https://getpino.io)** - Logging library
 
 ---
 
 ## 🚀 Production Deployment Checklist
 
-- [ ] Update `JWT_SECRET` to a strong random value
+- [ ] Update `BETTER_AUTH_SECRET` to a strong random value
 - [ ] Set `NODE_ENV=production`
-- [ ] Use production PostgreSQL instance
-- [ ] Enable HTTPS
-- [ ] Set up monitoring/alerting
-- [ ] Configure rate limits for production
-- [ ] Set up CI/CD pipeline
-- [ ] Run database migrations before deploy
-
----
-
-## 💡 Tips
-
-- **Add path aliases** to reduce import clutter - already configured!
-- **Use environment variables** for all configuration
-- **Keep schemas organized** - one file per table
-- **Test routes with Postman/Insomnia** for easier development
-- **Check logs** with `LOG_LEVEL=debug` during development
-
----
+- [ ] Use production PostgreSQL database
+- [ ] Enable HTTPS on your host environment
+- [ ] Ensure frontend `BETTER_AUTH_URL` and backend environment variables match
+- [ ] Run database migrations prior to deploying the server
 
 Happy building! 🎉
-
-Have questions? Check the [README.md](README.md) for detailed API documentation.

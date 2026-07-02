@@ -1,10 +1,10 @@
-import { Context } from "hono";
-import { ApiResponse } from "@/types";
+import type { Context, StatusCode } from "hono";
+import type { ApiResponse } from "../types";
 
 export function successResponse<T>(
   data: T,
   message = "Success",
-): ApiResponse<T> {
+ ): ApiResponse<T> {
   return {
     success: true,
     data,
@@ -27,10 +27,10 @@ export async function sendSuccess<T>(
   c: Context,
   data: T,
   message = "Success",
-  statusCode: number = 200,
+  statusCode = 200,
 ) {
   return c.json(successResponse(data, message), {
-    status: statusCode as any,
+    status: statusCode as StatusCode,
   });
 }
 
@@ -38,9 +38,9 @@ export async function sendError(
   c: Context,
   error: string | object,
   code = "INTERNAL_ERROR",
-  statusCode: number = 400,
+  statusCode = 400,
 ) {
   return c.json(errorResponse(error, code), {
-    status: statusCode as any,
+    status: statusCode as StatusCode,
   });
 }

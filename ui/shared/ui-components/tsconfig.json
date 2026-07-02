@@ -1,4 +1,5 @@
 {
+  "extends": "@workspace/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "./dist",
     "module": "es2022",
