@@ -7,13 +7,8 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Cascade load environment variables:
-// 1. Current package directory (.env)
-dotenv.config({ path: path.resolve(__dirname, ".env") });
-// 2. Workspace root directory (.env)
+// Load environment variables only from the workspace root directory (.env)
 dotenv.config({ path: path.resolve(__dirname, "../../.env") });
-// 3. Backend API directory (.env)
-// dotenv.config({ path: path.resolve(__dirname, "../../api/http-api/.env") });
 
 export default defineConfig({
   out: "./drizzle",
